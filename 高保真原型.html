@@ -1,0 +1,522 @@
+Generated html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高保真原型: 灵感织机 (Inspiration Weaver)</title>
+
+    <!-- Font System -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Icon System -->
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css"
+          onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';">
+
+    <!-- CSS Framework -->
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css"
+          onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css';">
+
+    <style>
+        /* Base font settings */
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-self;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Custom styles for the app and presentation */
+        .font-serif-sc { font-family: 'Noto Serif SC', serif; }
+        .font-sans-sc { font-family: 'Noto Sans SC', sans-serif; }
+        
+        /* Background and theme */
+        .theme-bg { background-color: #111827; }
+        .app-bg { background: linear-gradient(145deg, #1f2937, #111827); }
+
+        /* Custom Button Style */
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6, #6366F1);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 15px 0 rgba(99, 102, 241, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(139, 92, 246, 0.4);
+        }
+        .btn-primary:disabled {
+            background: #4B5563;
+            cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Textarea with focus effect */
+        .prompt-textarea {
+            background-color: rgba(31, 41, 55, 0.7);
+            border: 1px solid #374151;
+            transition: all 0.3s ease;
+        }
+        .prompt-textarea:focus {
+            background-color: rgba(31, 41, 55, 1);
+            border-color: #6366F1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+        
+        /* Style Selector Cards */
+        .style-card {
+            border: 1px solid #374151;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .style-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+        .style-card.active {
+            border-color: #8B5CF6;
+            background-color: #3730a3;
+            color: white;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Story Output Area */
+        #storyOutput {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        #storyOutput.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loader Animation */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #8B5CF6;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        /* Design Rationale Section Styling */
+        .rationale-card {
+            background-color: #1f2937;
+            border-left: 4px solid #6366F1;
+        }
+
+        /* Tooltip for explaining design choices */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip-icon {
+            color: #6366f1;
+            cursor: help;
+            font-size: 0.9em;
+            margin-left: 4px;
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #111827;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid #4f46e5;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        .story-controls {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #storyOutputContainer:hover .story-controls {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="theme-bg text-gray-200 font-sans-sc">
+
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ============== PROTOTYPE SECTION ============== -->
+        <section id="prototype-section" class="mb-24">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-3 font-serif-sc">灵感织机</h1>
+                <p class="text-lg text-indigo-300">编织属于你的叙事纹理</p>
+            </header>
+
+            <div id="app-container" class="w-full max-w-2xl mx-auto app-bg rounded-3xl shadow-2xl shadow-indigo-900/20 p-6 md:p-8 space-y-8 ring-1 ring-white/10">
+                
+                <!-- Step 1: Inspiration Input -->
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <label for="prompt" class="block text-lg font-semibold text-gray-100"><i class="fa-solid fa-lightbulb mr-2 text-yellow-300"></i>你的灵感</label>
+                        <div class="tooltip-container">
+                             <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                             <span class="tooltip-text">我们用一个宽敞、沉浸式的输入框，取代了令人生畏的白板。邀请式的提示语和“来点火花”功能，旨在消除“空白页焦虑”，让创作从一开始就轻松有趣。</span>
+                        </div>
+                    </div>
+                    <textarea id="prompt" class="prompt-textarea w-full h-36 p-4 rounded-xl text-gray-200 text-base resize-none leading-relaxed" placeholder="在此输入你的故事灵感，例如：一个住在赛博朋克都市里的古代骑士，他弄丢了自己的记忆…"></textarea>
+                    <button id="sparkBtn" class="text-sm text-indigo-400 hover:text-indigo-300 mt-2 transition-colors duration-200"><i class="fa-solid fa-wand-sparkles mr-1"></i>需要火花？随机来一个</button>
+                </div>
+                
+                <!-- Step 2: Style Selection -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <label class="block text-lg font-semibold text-gray-100"><i class="fa-solid fa-palette mr-2 text-green-300"></i>选择风格</label>
+                        <div class="tooltip-container">
+                            <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                            <span class="tooltip-text">我们将抽象的“风格”具象化为带有图标的卡片。这不仅更美观，也帮助用户更快地建立情感连接，直观地选择他们想要的故事氛围，降低决策成本。</span>
+                        </div>
+                    </div>
+                    <div id="styleSelector" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="style-card p-4 rounded-lg text-center active" data-style="默认风格">
+                            <i class="fa-solid fa-feather-pointed text-2xl mb-2"></i>
+                            <p class="font-medium">默认风格</p>
+                        </div>
+                        <div class="style-card p-4 rounded-lg text-center" data-style="悬疑惊悚">
+                            <i class="fa-solid fa-user-secret text-2xl mb-2"></i>
+                            <p class="font-medium">悬疑惊悚</p>
+                        </div>
+                        <div class="style-card p-4 rounded-lg text-center" data-style="浪漫童话">
+                            <i class="fa-solid fa-wand-magic-sparkles text-2xl mb-2"></i>
+                            <p class="font-medium">浪漫童话</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Action Button -->
+                <div class="pt-4">
+                    <button id="generateBtn" class="btn-primary w-full py-4 px-6 rounded-xl text-lg font-bold text-white flex items-center justify-center">
+                        <i class="fa-solid fa-scroll mr-3"></i>
+                        <span>开始编织</span>
+                    </button>
+                </div>
+
+                <!-- Step 4: Output / Loading Area -->
+                <div id="output-area" class="pt-6 border-t border-gray-700/50">
+                    <div id="loader" class="hidden h-32 flex-col items-center justify-center text-center">
+                        <div class="loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <p class="mt-6 text-indigo-300 font-serif-sc tracking-widest">正在编织中...</p>
+                         <div class="tooltip-container mt-2">
+                            <i class="fa-solid fa-circle-question tooltip-icon"></i>
+                            <span class="tooltip-text">等待是体验的一部分。我们用“编织”动画，将枯燥的加载时间转化为充满期待的“魔法时刻”，强化了产品的核心隐喻，让用户感觉自己正在见证一个创造过程。</span>
+                        </div>
+                    </div>
+
+                    <div id="storyOutputContainer" class="relative hidden">
+                        <h3 class="text-xl font-semibold text-gray-100 mb-4 flex items-center"><i class="fa-solid fa-book-open mr-3 text-indigo-300"></i>你的故事</h3>
+                        <div id="storyOutput" class="prose prose-invert max-w-none text-gray-300 font-serif-sc bg-gray-900/50 p-6 rounded-lg leading-loose tracking-wider">
+                           <!-- Story content will be injected here -->
+                        </div>
+                         <div class="story-controls absolute top-0 right-0 mt-1 mr-1 flex gap-2">
+                            <button id="copyBtn" title="复制故事" class="bg-gray-700 hover:bg-gray-600 text-gray-300 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                             <button id="reweaveBtn" title="重新编织" class="bg-gray-700 hover:bg-gray-600 text-gray-300 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200">
+                                <i class="fa-solid fa-arrows-rotate"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="error-message" class="hidden text-center text-red-400 bg-red-900/50 p-4 rounded-lg">
+                        <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                        <span>啊哦，灵感丝线断了... 请稍后再试。</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ============== DESIGN RATIONALE SECTION ============== -->
+        <section id="rationale-section">
+            <header class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">设计理念阐述</h2>
+                <div class="w-24 h-1 bg-indigo-500 mx-auto mt-4 rounded"></div>
+            </header>
+
+            <div class="space-y-12">
+                <!-- Pain Point Analysis -->
+                <div class="rationale-card p-6 md:p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-white mb-4"><i class="fa-solid fa-heart-pulse mr-3 text-red-400"></i>深度需求洞察与痛点聚焦</h3>
+                    <p class="text-gray-400 mb-6">我们认为，用户使用“灵感织机”的核心需求不只是“生成故事”，而是**克服创作初期的心理障碍，获得高质量的灵感火花**。基于此，我们识别出三大核心痛点：</p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-file-lines text-xl text-indigo-400 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">1. 空白页焦虑 (Blank Page Anxiety)</h4>
+                                <p class="text-gray-400">面对空白输入框的巨大压力，创意被扼杀在摇篮里。用户不知道从何写起，感到畏惧和无助。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-compass-drafting text-xl text-indigo-400 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">2. 灵感模糊与选择困难 (Vague Inspiration)</h4>
+                                <p class="text-gray-400">用户心中或许有模糊的想法，但难以将其转化为具体的、可操作的创作指令，导致生成结果不符合预期。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-robot text-xl text-indigo-400 mt-1 mr-4"></i>
+                            <div>
+                                <h4 class="font-semibold text-white">3. 冰冷的机器感 (Impersonal Experience)</h4>
+                                <p class="text-gray-400">传统的AI工具交互过程生硬，等待时间枯燥，输出结果缺乏情感。这让创作过程失去了应有的乐趣和“魔法感”。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- User Journey -->
+                <div class="rationale-card p-6 md:p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-white mb-4"><i class="fa-solid fa-map-signs mr-3 text-green-400"></i>核心用户旅程与功能地图</h3>
+                    <p class="text-gray-400 mb-6">我们设计的用户旅程是一条流畅、无断点的单向流，旨在将用户从“灵感枯竭”无缝引导至“获得启发”，每一步都旨在增强信心和愉悦感。</p>
+                    <div class="mermaid bg-gray-900 p-4 rounded-lg text-center">
+graph TD
+    A["🏠 打开应用"] --> B{"💡 面对灵感输入"};
+    B --> C["✨ [机会点] <br>提供灵感火花"];
+    B --> D["⌨️ 自主输入灵感"];
+    C --> D;
+    D --> E["🎨 选择故事风格"];
+    E --> F["📜 点击 '开始编织'"];
+    F --> G["⏳ [愉悦点] <br> '正在编织' 动画"];
+    G --> H{"📖 故事呈现"};
+    H --> I["📋 复制故事"];
+    H --> J["🔄 重新编织"];
+
+    style A fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style B fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style C fill:#3730a3,stroke:#8B5CF6,stroke-width:2px,color:#fff
+    style D fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style E fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style F fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style G fill:#3730a3,stroke:#8B5CF6,stroke-width:2px,color:#fff
+    style H fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style I fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+    style J fill:#1f2937,stroke:#374151,stroke-width:2px,color:#fff
+                    </div>
+                </div>
+
+                <!-- Pain Point Solutions -->
+                <div class="rationale-card p-6 md:p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-white mb-4"><i class="fa-solid fa-key mr-3 text-yellow-400"></i>痛点解决方案详解</h3>
+                    <p class="text-gray-400 mb-6">原型中的每一个设计决策都直接回应了我们识别出的核心痛点：</p>
+                    <ul class="space-y-6">
+                        <li>
+                            <h4 class="font-semibold text-indigo-300 text-lg mb-2">针对“空白页焦虑”：</h4>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>引导式输入框：</strong> 富有启发性的占位符文本，为用户提供了一个清晰的起点。</p>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>“需要火花？”功能：</strong> 一键生成随机灵感，是打破僵局的完美破冰船，将用户的角色从“创作者”暂时转变为“发现者”，极大降低了心理门槛。</p>
+                        </li>
+                        <li>
+                            <h4 class="font-semibold text-indigo-300 text-lg mb-2">针对“灵感模糊与选择困难”：</h4>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>具象化风格卡片：</strong> 用图标和清晰的标签代替了枯燥的下拉菜单。这种视觉化的选择方式更直观、更有趣，帮助用户将模糊的感觉与具体的风格进行匹配。</p>
+                        </li>
+                         <li>
+                            <h4 class="font-semibold text-indigo-300 text-lg mb-2">针对“冰冷的机器感”：</h4>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>“编织”隐喻的贯彻：</strong> 从按钮文案到加载动画，我们将“编织”这一温暖、充满手工艺感的核心隐喻贯穿始终，让技术过程充满了人文关怀和艺术感。</p>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>优雅的加载动画：</strong> 将等待变为一种享受和期待。跳动的丝线动画让用户感觉AI正在为他“精心制作”故事，而非简单粗暴地运算。</p>
+                            <p class="text-gray-300"><i class="fa-solid fa-check-circle text-green-400 mr-2"></i><strong>精致的排版与呈现：</strong> 使用优雅的衬线字体（Noto Serif SC）来展示最终的故事，赋予其一种文学作品的仪式感，提升了输出内容的价值感。</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Design System -->
+                <div class="rationale-card p-6 md:p-8 rounded-lg">
+                    <h3 class="text-2xl font-semibold text-white mb-4"><i class="fa-solid fa-swatchbook mr-3 text-purple-400"></i>设计系统与风格定义</h3>
+                    <p class="text-gray-400 mb-6">我们的设计系统旨在创造一种**沉静、专注、富有想象力**的氛围，让用户感觉置身于一个激发创意的私人工作室。</p>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="font-semibold text-white mb-2">色彩系统</h4>
+                            <p class="text-gray-400 mb-4">以深邃的暗夜蓝（`#111827`）为基底，模拟深夜或宇宙，创造沉思的环境。以充满活力的靛蓝和紫色（`#6366F1`, `#8B5CF6`）作为强调色，象征着灵感的迸发和魔法的瞬间。</p>
+                            <div class="flex space-x-4">
+                                <div class="w-12 h-12 rounded-full bg-gray-900 border-2 border-gray-700" title="#111827"></div>
+                                <div class="w-12 h-12 rounded-full bg-gray-800 border-2 border-gray-700" title="#1F2937"></div>
+                                <div class="w-12 h-12 rounded-full bg-indigo-500" title="#6366F1"></div>
+                                <div class="w-12 h-12 rounded-full bg-purple-500" title="#8B5CF6"></div>
+                                <div class="w-12 h-12 rounded-full bg-yellow-300" title="#FDE047"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white mb-2">排版层级</h4>
+                            <p class="text-gray-400 mb-4">我们采用双字体策略，以实现功能与情感的平衡。</p>
+                            <ul class="list-disc list-inside text-gray-400">
+                                <li><strong class="text-gray-200">Noto Sans SC (无衬线):</strong> 用于所有UI控件、标签和说明。清晰、现代，保证了信息的可读性。</li>
+                                <li><strong class="text-gray-200">Noto Serif SC (衬线):</strong> 专用于AI生成的故事正文。优雅、富有书卷气，提升了内容的文学感和价值感。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <!-- JS Libraries & Interaction Script -->
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/mermaid/8.14.0/mermaid.min.js"
+            onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.14.0/mermaid.min.js';"></script>
+            
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mermaid Initialization
+            try {
+                mermaid.initialize({ startOnLoad: true, theme: 'dark', darkMode: true });
+            } catch (e) {
+                console.error("Mermaid.js failed to initialize:", e);
+                const mermaidDiagrams = document.querySelectorAll('.mermaid');
+                mermaidDiagrams.forEach(diag => {
+                    diag.innerHTML = "<p class='text-red-400'>Diagram failed to load.</p>";
+                });
+            }
+
+            // Prototype Interaction Logic
+            const promptEl = document.getElementById('prompt');
+            const sparkBtn = document.getElementById('sparkBtn');
+            const styleSelector = document.getElementById('styleSelector');
+            const generateBtn = document.getElementById('generateBtn');
+            const generateBtnText = generateBtn.querySelector('span');
+            const loader = document.getElementById('loader');
+            const outputContainer = document.getElementById('storyOutputContainer');
+            const storyOutputEl = document.getElementById('storyOutput');
+            const errorMessage = document.getElementById('error-message');
+            const copyBtn = document.getElementById('copyBtn');
+            const reweaveBtn = document.getElementById('reweaveBtn');
+
+
+            let currentState = {
+                prompt: '',
+                style: '默认风格',
+                isLoading: false,
+                story: ''
+            };
+
+            const sparks = [
+                "一座漂浮在云海中的图书馆，里面的书会自己窃窃私语。",
+                "一个只能在梦中与人交流的侦探，正在追查一桩现实中的悬案。",
+                "在一家只出售情绪的商店里，一个女孩想买回她失去的快乐。",
+                "末日后的世界，最后一个音乐家发现了一把能让植物重新生长的旧小提琴。",
+                "一个程序员发现，他写的代码竟然开始预言未来。"
+            ];
+            
+            const storyTemplates = {
+                '默认风格': (p) => `在一个被遗忘的角落，${p}。微风拂过，带来了远方的秘密。故事就这样开始了，充满了未知与可能。每一个选择都像是在迷雾中点亮一盏灯，指引着前方的道路，而结局，则藏在最深的阴影或是最耀眼的光芒之中。`,
+                '悬疑惊悚': (p) => `夜色如墨，${p}。空气中弥漫着一丝若有若无的铁锈味。一个不祥的预感攫住了主角的心。每个脚步声都像是死亡的倒计时，墙上的影子仿佛活了过来，正无声地嘲笑着他的无知。真相，远比他能想象的任何噩梦都要恐怖。`,
+                '浪漫童话': (p) => `在很久很久以前，一个阳光明媚的王国里，${p}。空气中充满了丁香花的甜香和云雀的歌唱。一次偶然的邂逅，仿佛是命运金线的牵引，让两颗心紧紧靠近。他们将携手走过荆棘丛生的森林，跨越恶龙守护的山脉，最终在星光下许下永恒的誓言。`
+            };
+
+            // Event Listeners
+            sparkBtn.addEventListener('click', () => {
+                const randomSpark = sparks[Math.floor(Math.random() * sparks.length)];
+                promptEl.value = randomSpark;
+                promptEl.focus();
+            });
+
+            styleSelector.addEventListener('click', (e) => {
+                const card = e.target.closest('.style-card');
+                if (!card) return;
+
+                document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                currentState.style = card.dataset.style;
+            });
+            
+            generateBtn.addEventListener('click', handleGenerate);
+            reweaveBtn.addEventListener('click', handleGenerate);
+            
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(storyOutputEl.innerText).then(() => {
+                    copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+                    }, 2000);
+                }).catch(err => {
+                    alert('复制失败!');
+                });
+            });
+
+            function handleGenerate() {
+                currentState.prompt = promptEl.value;
+                if (!currentState.prompt.trim()) {
+                    promptEl.focus();
+                    promptEl.classList.add('border-red-500', 'animate-pulse');
+                    setTimeout(() => promptEl.classList.remove('border-red-500', 'animate-pulse'), 1500);
+                    return;
+                }
+                
+                currentState.isLoading = true;
+                render();
+                
+                // Simulate API call
+                setTimeout(() => {
+                    currentState.isLoading = false;
+                    const template = storyTemplates[currentState.style] || storyTemplates['默认风格'];
+                    currentState.story = template(currentState.prompt);
+                    render();
+                }, 2500); // Simulate network delay
+            }
+
+            function render() {
+                // Handle loading state
+                if (currentState.isLoading) {
+                    generateBtn.disabled = true;
+                    generateBtnText.textContent = '编织中...';
+                    loader.classList.remove('hidden');
+                    loader.classList.add('flex');
+                    outputContainer.classList.add('hidden');
+                    outputContainer.classList.remove('visible');
+                    storyOutputEl.classList.remove('visible');
+                    errorMessage.classList.add('hidden');
+                } else {
+                    generateBtn.disabled = false;
+                    generateBtnText.textContent = '开始编织';
+                    loader.classList.add('hidden');
+                    loader.classList.remove('flex');
+                }
+                
+                // Handle story output
+                if (currentState.story && !currentState.isLoading) {
+                    storyOutputEl.innerText = currentState.story;
+                    outputContainer.classList.remove('hidden');
+                    errorMessage.classList.add('hidden');
+                    // Use a short delay to allow the container to be displayed before triggering transition
+                    setTimeout(() => {
+                        storyOutputEl.classList.add('visible');
+                    }, 50);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

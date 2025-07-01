@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感织机 - Inspiration Loom</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loom-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 微光背景 */
+        .ambient-light {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            animation: breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.2; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.4; }
+        }
+
+        /* 经线 */
+        .warp-thread {
+            position: absolute;
+            width: 1px;
+            height: 0;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.8), transparent);
+            top: 15%;
+            transform: translateX(-50%);
+            opacity: 0;
+            box-shadow: 0 0 6px rgba(255,255,255,0.6);
+        }
+
+        /* 纺锤 */
+        .spindle {
+            position: absolute;
+            bottom: 8%;
+            width: 6px;
+            height: 40px;
+            background: linear-gradient(to bottom, #8B4513, #CD853F, #8B4513);
+            border-radius: 3px;
+            opacity: 0;
+        }
+
+        /* 丝线 */
+        .thread {
+            position: absolute;
+            width: 1px;
+            height: 25px;
+            border-radius: 0.5px;
+            opacity: 0;
+            transform-origin: bottom center;
+        }
+
+        /* 光点粒子 */
+        .light-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9), transparent);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        /* 文字区域 */
+        .text-fabric {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            z-index: 10;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 30px 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 56px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #FFD700, #FF6B6B, #4ECDC4, #45B7D1);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: #aaa;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .slogan {
+            font-size: 20px;
+            color: #888;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 动画关键帧 */
+        @keyframes warpGrow {
+            0% { 
+                height: 0; 
+                opacity: 0; 
+            }
+            100% { 
+                height: 70%; 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes particleTravel {
+            0% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            90% { 
+                opacity: 0.8; 
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0.3);
+            }
+        }
+
+        @keyframes threadWind {
+            0% { 
+                opacity: 0; 
+                transform: rotate(0deg) scale(0);
+            }
+            100% { 
+                opacity: 0.9; 
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        @keyframes textWeave {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.9);
+                filter: blur(8px);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1);
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 织物纹理效果 */
+        .fabric-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.01) 2px,
+                    rgba(255,255,255,0.01) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255,255,255,0.005) 2px,
+                    rgba(255,255,255,0.005) 4px
+                );
+            pointer-events: none;
+        }
+
+        @keyframes fabricReveal {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loom-container">
+        <!-- 微光背景 -->
+        <div class="ambient-light"></div>
+        
+        <!-- 织物纹理叠加层 -->
+        <div class="fabric-overlay"></div>
+        
+        <!-- 经线容器 -->
+        <div class="warp-threads"></div>
+        
+        <!-- 纺锤容器 -->
+        <div class="spindles"></div>
+        
+        <!-- 最终文字 -->
+        <div class="text-fabric">
+            <div class="logo">灵感织机</div>
+            <div class="subtitle">Inspiration Loom</div>
+            <div class="slogan">编织属于你的叙事纹理</div>
+        </div>
+    </div>
+
+    <script>
+        class SimpleLoomAnimation {
+            constructor() {
+                this.container = document.querySelector('.loom-container');
+                this.warpContainer = document.querySelector('.warp-threads');
+                this.spindleContainer = document.querySelector('.spindles');
+                this.textFabric = document.querySelector('.text-fabric');
+                this.fabricOverlay = document.querySelector('.fabric-overlay');
+                
+                this.init();
+            }
+
+            init() {
+                // 延迟开始，让微光先呼吸一下
+                setTimeout(() => this.stage1_createWarpThreads(), 1500);
+            }
+
+            // 第一阶段：创建经线
+            stage1_createWarpThreads() {
+                const warpCount = 12;
+                const centerX = window.innerWidth / 2;
+                const spacing = 40;
+                const startX = centerX - (spacing * (warpCount - 1)) / 2;
+
+                for (let i = 0; i < warpCount; i++) {
+                    const warp = document.createElement('div');
+                    warp.className = 'warp-thread';
+                    warp.style.left = `${startX + i * spacing}px`;
+                    warp.style.animationDelay = `${i * 0.08}s`;
+                    warp.style.animation = 'warpGrow 1.2s ease-out forwards';
+                    
+                    this.warpContainer.appendChild(warp);
+                }
+
+                setTimeout(() => this.stage2_createSpindles(), 1800);
+            }
+
+            // 第二阶段：创建纺锤和丝线
+            stage2_createSpindles() {
+                const spindlePositions = [25, 40, 55, 70];
+                const threadColors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#6BCF7F'];
+
+                spindlePositions.forEach((pos, index) => {
+                    // 创建光点粒子效果
+                    this.createLightParticles(pos, threadColors[index]);
+                    
+                    setTimeout(() => {
+                        // 创建纺锤
+                        const spindle = document.createElement('div');
+                        spindle.className = 'spindle';
+                        spindle.style.left = `${pos}%`;
+                        spindle.style.animation = 'fadeIn 0.6s ease-out forwards';
+                        this.spindleContainer.appendChild(spindle);
+
+                        // 创建缠绕的丝线
+                        for (let i = 0; i < 4; i++) {
+                            const thread = document.createElement('div');
+                            thread.className = 'thread';
+                            thread.style.background = threadColors[index];
+                            thread.style.left = `${pos}%`;
+                            thread.style.bottom = `${8 + i * 6}%`;
+                            thread.style.transformOrigin = `${2 + Math.random() * 2}px bottom`;
+                            thread.style.animationDelay = `${i * 0.15}s`;
+                            thread.style.animation = 'threadWind 0.8s ease-out forwards';
+                            thread.style.boxShadow = `0 0 4px ${threadColors[index]}`;
+                            
+                            this.spindleContainer.appendChild(thread);
+                        }
+                    }, index * 200);
+                });
+
+                setTimeout(() => this.stage3_textWeaving(), 2800);
+            }
+
+            // 创建光点粒子效果
+            createLightParticles(targetPos, color) {
+                const particleCount = 6;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'light-particle';
+                    particle.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                    particle.style.boxShadow = `0 0 6px ${color}`;
+                    
+                    // 随机起始位置（从边缘）
+                    const side = Math.floor(Math.random() * 4);
+                    let startX, startY;
+                    
+                    switch(side) {
+                        case 0: // 上
+                            startX = Math.random() * window.innerWidth;
+                            startY = 0;
+                            break;
+                        case 1: // 右
+                            startX = window.innerWidth;
+                            startY = Math.random() * window.innerHeight;
+                            break;
+                        case 2: // 下
+                            startX = Math.random() * window.innerWidth;
+                            startY = window.innerHeight;
+                            break;
+                        case 3: // 左
+                            startX = 0;
+                            startY = Math.random() * window.innerHeight;
+                            break;
+                    }
+                    
+                    particle.style.left = `${startX}px`;
+                    particle.style.top = `${startY}px`;
+                    
+                    this.container.appendChild(particle);
+                    
+                    // 动画到目标位置
+                    setTimeout(() => {
+                        particle.style.transition = 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        particle.style.left = `${targetPos}%`;
+                        particle.style.bottom = '8%';
+                        particle.style.top = 'auto';
+                        particle.style.opacity = '1';
+                        
+                        setTimeout(() => {
+                            particle.style.animation = 'particleTravel 0.4s ease-out forwards';
+                        }, 1000);
+                        
+                        setTimeout(() => {
+                            particle.remove();
+                        }, 1600);
+                    }, i * 80);
+                }
+            }
+
+            // 第三阶段：文字编织
+            stage3_textWeaving() {
+                // 显示织物纹理
+                this.fabricOverlay.style.animation = 'fabricReveal 1.5s ease-out forwards';
+                
+                // 文字浮现
+                setTimeout(() => {
+                    this.textFabric.style.animation = 'textWeave 2.5s ease-out forwards';
+                }, 300);
+                
+                // 添加最终的光效
+                setTimeout(() => {
+                    this.addFinalGlow();
+                }, 1500);
+            }
+
+            // 添加最终光效
+            addFinalGlow() {
+                const logo = document.querySelector('.logo');
+                logo.style.filter = 'drop-shadow(0 0 15px rgba(255,255,255,0.3))';
+                
+                // 微妙的脉冲效果
+                setInterval(() => {
+                    logo.style.textShadow = `
+                        0 0 20px rgba(255,255,255,${0.2 + Math.random() * 0.2}),
+                        0 0 40px rgba(255,215,0,${0.1 + Math.random() * 0.1})
+                    `;
+                }, 2000);
+            }
+        }
+
+        // 启动动画
+        window.addEventListener('load', () => {
+            new SimpleLoomAnimation();
+        });
+
+        // 点击重新播放
+        document.addEventListener('click', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>

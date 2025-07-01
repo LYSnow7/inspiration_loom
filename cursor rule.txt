@@ -1,0 +1,44 @@
+# 灵感织机 (Inspiration Loom) MVP - Cursor 项目规则
+
+## 1. 项目核心目标
+本项目的唯一目标是构建一个最小可行产品（MVP），用于验证核心功能：用户输入灵感文本，AI生成一篇短篇故事。**始终以简单、直接的方式实现功能，避免任何不必要的复杂性。**
+
+## 2. 技术栈与框架
+- **核心框架**: Next.js 14+ (使用 App Router)
+- **语言**: TypeScript
+- **样式**: Tailwind CSS。**规则：禁止使用任何外部CSS文件、CSS模块或CSS-in-JS方案，所有样式必须通过Tailwind的工具类实现。**
+- **状态管理**: 仅使用 React `useState` 和 `props`。**规则：禁止引入 Zustand、Redux等任何第三方状态管理库。**
+- **API请求**: 在前端组件中，使用原生的 `fetch` 函数与后端API路由进行通信。
+- **后端逻辑**: 完全包含在Next.js的API路由 (`app/api/...`) 中。
+
+## 3. 编码规范
+- **组件结构**: 对于MVP，所有UI都构建在 `app/page.tsx` 单一文件中。保持JSX结构清晰、语义化。
+- **命名约定**:
+  - 组件：`PascalCase` (本项目中只有一个主页面组件)
+  - 变量和函数：`camelCase`
+- **代码注释**: 对于复杂的逻辑（尤其是API路由中的提示词构建部分），添加简明扼要的注释。
+- **错误处理**: 客户端的`fetch`调用必须包含`.catch()`块来处理网络或API错误，并向用户显示简单的错误信息。API路由本身也应使用`try...catch`来捕获异常。
+
+## 4. 文件结构关键点
+- **前端页面**: `app/page.tsx` (这是你90%的工作区域)
+- **后端逻辑**: `app/api/generate/route.ts` (这是处理AI调用的地方)
+- **环境变量**: 必须从 `.env.local` 文件中读取API密钥，**规则：严禁将任何密钥硬编码在代码中。**
+
+## 5. Git提交信息规范
+所有Git提交都必须遵循**Conventional Commits**标准。
+- `feat`: 新增功能
+- `fix`: 修复bug
+- `docs`: 修改文档
+- `style`: 代码格式调整（不影响逻辑）
+- `refactor`: 代码重构
+- `chore`: 构建过程或辅助工具的变动
+- **示例**: `feat: implement story generation API route`
+
+## 6. Agent行为指令
+- 在生成代码前，请务必阅读`README.md`以了解完整的上下文。
+- 当被要求修改UI时，请直接修改`app/page.tsx`。
+- 当被要求修改AI逻辑时，请直接修改`app/api/generate/route.ts`。
+- 始终保持代码的简洁性，以符合MVP的核心理念。
+
+## 7. 安全规则
+- **API密钥隔离**: 必须在后端的API路由中调用所有需要密钥的第三方服务。严禁在任何客户端组件 (`app/page.tsx` 或其他) 中处理或引用`OPENAI_API_KEY`。前端只能调用我们自己的内部API路由。
